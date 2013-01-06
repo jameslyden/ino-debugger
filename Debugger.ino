@@ -6,16 +6,16 @@
  * with no additional functionality.
  */
 
-int currDebugTime;
-int lastDebugTime;
+//int currDebugTime;
+//int lastDebugTime;
  
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
  
 void loop() {
   // do work
-  delay(1000);
+  delay(100);
   // collect pin states and send to serial port 
   Debug();  
 }
@@ -23,13 +23,13 @@ void loop() {
 void Debug() {
   // setup analog and digital pin ranges
   int aPinStart = A0;
-  int aPinEnd = A3;
+  int aPinEnd = A2;
   int dPinStart = 2;
-  int dPinEnd = 5;
+  int dPinEnd = 6;
   // all debug data is assembled into a char array before writing
   // structure is 5B header, 1B per analog pin, 1B per digital pin, an 1B CRC value
   int debugPayloadSize = (aPinEnd - aPinStart + 1) + (dPinEnd - dPinStart + 1);
-  int debugDataSize = 5 + debugPayloadSize + 1;
+  int debugDataSize = 4 + debugPayloadSize + 1;
   int debugDataCount = 0;
   char debugData[debugDataSize];
 
@@ -40,13 +40,13 @@ void Debug() {
   debugData[debugDataCount++] = debugDataSize;
   
   // Compute ms since last run through this function
-  currDebugTime = millis();
-  int interval = currDebugTime - lastDebugTime;
-  if (interval > 255) {
-    interval = 255;
-  }
-  debugData[debugDataCount++] = interval;
-  lastDebugTime = currDebugTime;
+//  currDebugTime = millis();
+//  int interval = currDebugTime - lastDebugTime;
+//  if (interval > 255) {
+//    interval = 255;
+//  }
+//  debugData[debugDataCount++] = interval;
+//  lastDebugTime = currDebugTime;
   
   // Iterate through analog inputs, mapping to a 250-point scale
   for (int i = aPinStart; i <= aPinEnd; i++) {
@@ -60,7 +60,7 @@ void Debug() {
   
   // Build 8-bit CRC from payload
   int CRC = 0;  
-  for (int i = 5; i < debugDataSize - 1; i++) {
+  for (int i = 4; i < debugDataSize - 1; i++) {
     CRC = CRC + debugData[i];
     CRC = CRC % 256;
   }
