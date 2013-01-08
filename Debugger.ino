@@ -6,28 +6,27 @@
  * with no additional functionality.
  */
 
-//int currDebugTime;
-//int lastDebugTime;
- 
+void Debug();
+
 void setup() {
   Serial.begin(115200);
 }
- 
+
 void loop() {
   // do work
-  delay(100);
+  delay(14);
   // collect pin states and send to serial port 
-  Debug();  
+  Debug();
 }
 
 void Debug() {
   // setup analog and digital pin ranges
   int aPinStart = A0;
-  int aPinEnd = A2;
+  int aPinEnd = A3;
   int dPinStart = 2;
-  int dPinEnd = 6;
+  int dPinEnd = 7;
   // all debug data is assembled into a char array before writing
-  // structure is 5B header, 1B per analog pin, 1B per digital pin, an 1B CRC value
+  // structure is 4B header, 1B per analog pin, 1B per digital pin, an 1B CRC value
   int debugPayloadSize = (aPinEnd - aPinStart + 1) + (dPinEnd - dPinStart + 1);
   int debugDataSize = 4 + debugPayloadSize + 1;
   int debugDataCount = 0;
@@ -38,36 +37,34 @@ void Debug() {
   debugData[debugDataCount++] = 254;
   debugData[debugDataCount++] = 253;
   debugData[debugDataCount++] = debugDataSize;
-  
-  // Compute ms since last run through this function
-//  currDebugTime = millis();
-//  int interval = currDebugTime - lastDebugTime;
-//  if (interval > 255) {
-//    interval = 255;
-//  }
-//  debugData[debugDataCount++] = interval;
-//  lastDebugTime = currDebugTime;
-  
+
   // Iterate through analog inputs, mapping to a 250-point scale
   for (int i = aPinStart; i <= aPinEnd; i++) {
-    debugData[debugDataCount++] = map(analogRead(i), 0, 1023, 0, 249);
+    debugData[debugDataCount++] = constrain(map(analogRead(i), 0, 1023, 1, 249), 1, 249);
   }
-  
+
   // Iterate through digital inputs, mapping LOW to 250 and HIGH to 251
   for (int i = dPinStart; i <= dPinEnd; i++) {
     debugData[debugDataCount++] = digitalRead(i) + 250; 
   }
-  
+
   // Build 8-bit CRC from payload
-  int CRC = 0;  
-  for (int i = 4; i < debugDataSize - 1; i++) {
+  int CRC = 0;
+  for (int i = 4; i < debugDataCount; i++) {
     CRC = CRC + debugData[i];
-    CRC = CRC % 256;
   }
-  debugData[debugDataSize - 1] = CRC;
-  
+  CRC = CRC % 256;
+  debugData[debugDataCount] = CRC;
+
   // Send debug data over serial port
-  Serial.print(debugData);
+  Serial.println(debugData);
+
+//// metadebug data
+//  Serial.print(debugDataCount, DEC);
+//  Serial.print(" ");
+//  Serial.print(debugData[3], DEC);
+//  Serial.print(debugDataCount, DEC);
+//  Serial.println();
 }
-  
-  
+
+
