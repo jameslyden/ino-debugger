@@ -14,17 +14,17 @@ void setup() {
 
 void loop() {
   // do work
-  delay(14);
-  // collect pin states and send to serial port 
+  delay(1);
+  // collect pin states and send to serial port
   Debug();
 }
 
 void Debug() {
   // setup analog and digital pin ranges
   int aPinStart = A0;
-  int aPinEnd = A3;
-  int dPinStart = 2;
-  int dPinEnd = 7;
+  int aPinEnd = A1;
+  int dPinStart = 6;
+  int dPinEnd = 8;
   // all debug data is assembled into a char array before writing
   // structure is 4B header, 1B per analog pin, 1B per digital pin, an 1B CRC value
   int debugPayloadSize = (aPinEnd - aPinStart + 1) + (dPinEnd - dPinStart + 1);
