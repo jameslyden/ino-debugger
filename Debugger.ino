@@ -1,4 +1,8 @@
-/* A drop-in debugging routine to add to Arduino projects.
+/* Debugger: A drop-in debugging routine to add to Arduino projects.
+ * Copyright 2013, James Lyden <james@lyden.org>
+ * This code is licensed under the terms of the GNU General Public License.
+ * See COPYING, or refer to http://www.gnu.org/licenses, for further details.
+ *
  * Setup requires configuring the serial port as needed, adding the Debug function to the sketch,
  * adding the global variables, and calling Debug() from somewhere in the body of loop()
  *
