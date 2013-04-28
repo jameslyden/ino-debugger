@@ -20,6 +20,7 @@ However, it also has some weaknesses, which include:
 ### Packet structure
 
 The structure of a V1 packet is defined in the following table:
+
 | Section			| Bytes	| Notes															|
 |-----------------|--------|--------------------------------------------------|
 | Header				| 3		| Unique sequence (0xFF, 0xFE, 0xFD) that identifies the start of an ADMPv1 packet. Helps to prevent collisions between debug data and other program data, and to sync the receiver (these three values will never occur in the rest of the packet). |
@@ -27,6 +28,12 @@ The structure of a V1 packet is defined in the following table:
 | Analog Inputs	| X		| One byte per analog input transmitted. The value of X is equal to (ending analog pin - starting analog pin + 1). The minimum is 0 (if the starting analog pin is greater than the ending one), and the maximum is equal to the number of analog inputs available on the Arduino. |
 | Digital Inputs	| Y		| One byte per digital input transmitted. The value and limits of Y are equivalent to those for X, but considering digital inputs rather than analog ones. |
 | CRC					| 1		| An 8-bit simple summing CRC of the *payload values* only. This serves as a final protection against accidentally interpreting program data (or unsynced debug data) as ADMP packets. |
+
+A sample packet:
+
+| 0xFF   | 0xFE   | 0xFD   | 0x0A | 0xF9  | 0x7D  | 0x00  | 0xFA | 0xFB | 0x6B |
+|--------|--------|--------|------|-------|-------|-------|------|------|------|
+| Byte 0 | Byte 1 | Byte 2 | Size | 5.00V | 2.50V | 0.00V | LOW  | HIGH | CRC  |
 
 ### Interpretation of data
 
